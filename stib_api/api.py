@@ -40,20 +40,24 @@ class StibClient():
             )
         return response.json()
 
-    def save_shapefiles(self, dest):
-        self._get_to_file(self.get_endpoint('shapefiles'), dest)
+    def save_shapefiles(self, dest, in_memory=True):
+        self._get_to_file(self.get_endpoint('shapefiles'), dest,
+                          in_memory=in_memory)
 
-    def save_gtfs(self, dest):
-        self._get_to_file(self.get_endpoint('gtfs'), dest)
+    def save_gtfs(self, dest, in_memory=False):
+        self._get_to_file(self.get_endpoint('gtfs'), dest, in_memory=in_memory)
 
-    def _get_to_file(self, url, dest):
-        with self.session.get(url, stream=True) as response:
+    def _get_to_file(self, url, dest, in_memory=False):
+        with self.session.get(url, stream=in_memory) as response:
             if response.status_code != 200:
                 raise Exception(
                     'Got response {} when fetching {}'
                     .format(response.status_code, url)
                 )
             with open(dest, 'wb') as fh:
-                # We need a large enough chunk size to have decent speed.
-                for chunk in response.iter_content(chunk_size=4*1024*1024):
-                    fh.write(chunk)
+                if in_memory:
+                    fh.write(response.content)
+                else:
+                    # We need a large enough chunk size to have decent speed.
+                    for chunk in response.iter_content(chunk_size=4*1024*1024):
+                        fh.write(chunk)
