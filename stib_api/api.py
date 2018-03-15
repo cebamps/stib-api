@@ -1,7 +1,7 @@
 from .session import StibSession
 
 
-class StibClient():
+class StibClient:
     endpoints = {
         'token': 'token',
         'operation': 'OperationMonitoring/1.0/VehiclePositionByLine',
