@@ -48,7 +48,7 @@ class StibClient:
         self._get_to_file(self.get_endpoint('gtfs'), dest, in_memory=in_memory)
 
     def _get_to_file(self, url, dest, in_memory=False):
-        with self.session.get(url, stream=in_memory) as response:
+        with self.session.get(url, stream=not in_memory) as response:
             if response.status_code != 200:
                 raise Exception(
                     'Got response {} when fetching {}'
